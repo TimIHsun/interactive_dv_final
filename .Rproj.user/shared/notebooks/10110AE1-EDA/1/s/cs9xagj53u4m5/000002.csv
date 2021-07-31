@@ -1,0 +1,24 @@
+"0","library(ggplot2)"
+"0","library(dplyr)"
+"2","
+載入套件：‘dplyr’
+
+"
+"2","下列物件被遮斷自 ‘package:stats’:
+
+    filter, lag
+
+"
+"2","下列物件被遮斷自 ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+"
+"0","library(readxl)"
+"0","library(stringr)"
+"0","library(sysfonts)"
+"0","library(showtext)"
+"2","載入需要的套件：showtextdb
+"
+"0","font_add(""QYuan"",""cwTeXQYuan-Medium.ttf"") # 新增字體"
+"0","showtext_auto(enable=TRUE) #啟用字體"

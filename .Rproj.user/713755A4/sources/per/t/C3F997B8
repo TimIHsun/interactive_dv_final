@@ -1,0 +1,28 @@
+{
+    "id": "C3F997B8",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1626268390580.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "id": "91180db73d1b4d1e9c725c7903685d83",
+        "name": "schoollist",
+        "title": "schoollist",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 4562084006,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1626268390580,
+    "read_only": false,
+    "read_only_alternatives": []
+}

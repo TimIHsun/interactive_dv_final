@@ -1,0 +1,28 @@
+"0","schoollist$faraway_109 <- read_excel(""support/data/school/faraway_109.xls"","
+"0","col_names = FALSE, skip = 3, #skip first three rows"
+"0","    col_types = c(""text"", ""skip"", ""text"",  #skip unneeded columns"
+"0","        ""text"", ""text"", ""text"", ""skip"", ""text"", "
+"0","        ""text"", ""text"", ""text"", ""text"", ""text"", "
+"0","        ""skip"", ""skip"", ""text"", ""text"", ""skip"", "
+"0","        ""skip""))"
+"2","New names:
+* `` -> ...1
+* `` -> ...2
+* `` -> ...3
+* `` -> ...4
+* `` -> ...5
+* ...
+"
+"0","# change colnames "
+"0","str_c("
+"0","  str_replace_na(schoollist$faraway_109[1,],""""), "
+"0","  str_replace_na(schoollist$faraway_109[2,],"""")"
+"0","  ) -> colnames109"
+"0",""
+"0","colnames(schoollist$faraway_109) <- colnames109"
+"0",""
+"0","# remove first two rows (they are the original colname subparts )"
+"0",""
+"0","schoollist$faraway_109[-c(1,2),] -> schoollist$faraway_109"
+"0",""
+"0","schoollist$faraway_109"

@@ -1,0 +1,22 @@
+"0","for (i in 1:length(schoollist)){
+  
+  # schoollist[[i]] %>% mutate(
+  #   縣市代碼=str_sub(縣市名稱,2,3), 
+  #   縣市名稱=str_sub(縣市名稱,5,)
+  # ) -> schoollist[[i]]
+  # -> Can't transform a data frame with duplicate names.
+  # 因為colnames在剛才重新命名後有重複的
+  
+  #先取出需要的欄位，剛好撇除那些重複的colnames
+  schoollist[[i]] %>% select(colnames(schoollist$faraway_109)[-14]) -> schoollist[[i]]
+  
+  schoollist[[i]] %>% mutate(
+    縣市代碼=str_sub(縣市名稱,2,3),
+    縣市名稱=str_sub(縣市名稱,5,)
+  ) -> schoollist[[i]]
+}
+"
+"2","錯誤: Can't subset columns that don't exist.
+[31mx[39m Columns `縣市名稱`, `鄉鎮市區`, `學生等級`, `學校代碼`, `學校名稱`, etc. don't exist.
+[90mRun `rlang::last_error()` to see where the error occurred.[39m
+"

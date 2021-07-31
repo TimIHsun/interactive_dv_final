@@ -1,0 +1,166 @@
+---
+title: "EDA"
+author: "邱奕勳"
+date: "7/12/2021"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(readxl)
+library(stringr)
+library(sysfonts)
+library(showtext)
+font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+```
+
+## 偏遠地區國民中小學名錄
+
+
+### 資料
+
+一次載入資料 (https://stackoverflow.com/questions/11433432/how-to-import-multiple-csv-files-at-once)
+
+```{r}
+schoolfiles <- list.files(path = "./support/data/school", pattern = "*.xls", all.files = T, full.names = T)
+
+schoollist <- sapply(schoolfiles,read_xls) #101~109年
+
+names(schoollist) <- str_sub(schoolfiles,23,33)
+```
+
+
+#### 先以109為例 
+
+政府的資料不適合直接使用，他會在檔案裡面寫標題，而且colnames還放在兩個cell==
+```{r}
+schoollist$faraway_109 <- read_excel("support/data/school/faraway_109.xls",
+col_names = FALSE, skip = 3, #skip first three rows
+    col_types = c("text", "skip", "text",  #skip unneeded columns
+        "text", "text", "text", "skip", "text", 
+        "text", "text", "text", "text", "text", 
+        "skip", "skip", "text", "text", "skip", 
+        "skip"))
+
+# change colnames 
+str_c(
+  str_replace_na(schoollist$faraway_109[1,],""), 
+  str_replace_na(schoollist$faraway_109[2,],"")
+  ) -> colnames109
+
+colnames(schoollist$faraway_109) <- colnames109
+
+# remove first two rows (they are the original colname subparts )
+
+schoollist$faraway_109[-c(1,2),] -> schoollist$faraway_109
+```
+發現有兩排NA，剔除他們
+```{r}
+schoollist$faraway_109[is.na(schoollist$faraway_109$地區屬性),]
+
+which(is.na(schoollist$faraway_109$地區屬性))
+
+schoollist$faraway_109[-which(is.na(schoollist$faraway_109$地區屬性)),] -> faraway_109
+```
+
+有兩個台南市類別："[11]臺南市" "[21]臺南市"
+```{r}
+unique(schoollist$faraway_109$縣市名稱)
+
+#分離代碼和縣市名稱
+schoollist$faraway_109 %>% mutate(
+  縣市代碼=str_sub(縣市名稱,2,3), 
+  縣市名稱=str_sub(縣市名稱,5,)
+  ) -> schoollist$faraway_109
+```
+
+#### 103~108年
+因為101、102的資料pattern有點不同
+```{r}
+for (i in 3:8){
+  schoollist[[i]][-c(1,2),] ->  schoollist[[i]] #頭兩排NA
+  
+  str_c( 
+  str_replace_na(schoollist[[i]][1,],""), 
+  str_replace_na(schoollist[[i]][2,],"")
+  ) -> colnames_temp
+
+  colnames(schoollist[[i]]) <- colnames_temp
+  
+  schoollist[[i]][-c(1,2),] ->  schoollist[[i]]
+}
+
+
+for (i in 3:8){
+  
+  # schoollist[[i]] %>% mutate(
+  #   縣市代碼=str_sub(縣市名稱,2,3), 
+  #   縣市名稱=str_sub(縣市名稱,5,)
+  # ) -> schoollist[[i]]
+  # -> Can't transform a data frame with duplicate names.
+  # 因為colnames在剛才重新命名後有重複的
+  
+  #先取出需要的欄位，剛好撇除那些重複的colnames
+  schoollist[[i]] %>% select(colnames(schoollist$faraway_109)[-14]) -> schoollist[[i]]
+  
+  schoollist[[i]] %>% mutate(
+    縣市代碼=str_sub(縣市名稱,2,3),
+    縣市名稱=str_sub(縣市名稱,5,)
+  ) -> schoollist[[i]]
+}
+```
+
+#### 101~102年
+
+
+### 問題
+
+1. 哪個縣市較多、哪個縣市較少
+
+```{r}
+# 109年偏校總數
+unique(faraway_109$學校名稱) %>% length()
+unique(faraway_109$學校代碼) %>% length()
+# 兩者不同，表示有學校名稱一樣，學校總數為1105間
+```
+```{r}
+faraway_109 %>% group_by(縣市名稱) %>% summarise(length(學校代碼)) -> NofSchool_bycity
+
+NofSchool_bycity %>%
+  ggplot(aes(x=reorder(縣市名稱,`length(學校代碼)`),y=`length(學校代碼)`)) +
+  geom_col()+
+  geom_hline(aes(yintercept = mean(`length(學校代碼)`)))+
+  coord_flip()
+```
+
+#### findings
+
+* 台南市第二名
+* 四個縣市沒有偏校：台北市、基隆線、新竹市、嘉義市
+
+#### more問題
+
+* 偏校佔該縣市的比例為何？
+* 為什麼這四個縣市沒有偏校，特別之處？
+-> 也許可以從其他成因指標探討
+
+
+2. 趨勢有沒有變化
+3. 三個分級的比例
+```{r}
+# group_by("地區屬性") is wrong , "" unneeded
+faraway_109 %>% group_by(地區屬性) %>% summarise(length(學校代碼))
+```
+
+4. 學生數/班級數分佈
+
+```{r}
+ggplot(mtcars, aes(mpg, wt, colour = wt)) +
+  geom_point() +
+  geom_hline(aes(yintercept = wt, colour = wt)) +
+  facet_wrap(~ cyl)
+```
+
+

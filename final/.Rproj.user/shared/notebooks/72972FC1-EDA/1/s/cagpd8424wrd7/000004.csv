@@ -1,0 +1,8 @@
+"0",""
+"0","which(is.na(schoollist$faraway_109$地區屬性))"
+"1","[1]"
+"1"," 1106"
+"1"," 1107"
+"1","
+"
+"0","schoollist$faraway_109[-which(is.na(schoollist$faraway_109$地區屬性)),] -> schoollist$faraway_109"
